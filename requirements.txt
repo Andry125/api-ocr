@@ -4,3 +4,4 @@ gunicorn
 python-multipart
 google-genai
 pillow
+tenacity
