@@ -6,7 +6,7 @@ from PIL import Image
 
 app = FastAPI(
     title="API OCR avec Gemini",
-    description="API permettant de convertir le texte d'une photo à l'aide de l'API Google Gemini 2.5 Flash.",
+    description="API permettant de convertir le texte d'une photo à l'aide de l'API Google Gemini 3.6 Flash.",
     version="1.0.0",
 )
 
@@ -52,7 +52,7 @@ async def extract_text_from_image(file: UploadFile = File(...)):
 
         # Appel du modèle multimodal Gemini Flash
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-3.6-flash",
             contents=[
                 "Extrais tout le texte visible dans cette image. "
                 "Restitue uniquement le texte extrait sans commentaires, ni explications.",
