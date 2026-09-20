@@ -4,12 +4,22 @@ from google import genai
 from google.genai.errors import APIError
 from PIL import Image
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="API OCR Gemini avec Auto-Retry")
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
+# Configuration du CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Autorise tous les domaines (ou spécifiez l'URL de votre site)
+    allow_credentials=True,
+    allow_methods=["*"],  # Autorise GET, POST, etc.
+    allow_headers=["*"],
+)
 
 # Fonction helper pour vérifier si l'erreur est temporaire (503 ou 429)
 def is_transient_error(exception):
