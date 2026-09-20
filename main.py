@@ -32,33 +32,57 @@ def read_root():
 
 @app.post("/ocr")
 async def extract_text_from_image(file: UploadFile = File(...)):
-    """Reçoit un fichier image (JPG, PNG, WebP) et extrait le texte présent dedans."""
     if not client:
         raise HTTPException(
             status_code=500,
-            detail="La clé GEMINI_API_KEY n'est pas configurée dans les variables d'environnement.",
+            detail="La clé GEMINI_API_KEY n'est pas configurée.",
         )
 
-    # Vérification du type MIME
     if not file.content_type.startswith("image/"):
         raise HTTPException(
             status_code=400,
-            detail="Le fichier fourni doit être une image (e.g. image/jpeg, image/png).",
+            detail="Le fichier fourni doit être une image.",
         )
 
     try:
-        # Charger l'image avec PIL
         image = Image.open(file.file)
 
-        # Appel du modèle multimodal Gemini Flash
-        response = client.models.generate_content(
-            model="gemini-3.6-flash",
-            contents=[
-                "Extrais tout le texte visible dans cette image. "
-                "Restitue uniquement le texte extrait sans commentaires, ni explications.",
-                image,
-            ],
+        # Liste des modèles à essayer par ordre de préférence
+        candidate_models = [
+            "gemini-3.6-flash",
+            "gemini-1.5-flash",
+            "gemini-2.5-flash-lite",
+        ]
+
+        response = None
+        last_error = None
+
+        prompt = (
+            "Extrais tout le texte visible dans cette image. "
+            "Restitue uniquement le texte extrait sans commentaires, ni explications."
         )
+
+        # Essayer chaque modèle jusqu'à ce qu'un fonctionne
+        for model_name in candidate_models:
+            try:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=[prompt, image],
+                )
+                # Si l'appel réussit, on sort de la boucle
+                break
+            except APIError as err:
+                last_error = err
+                # Si erreur 503, on passe au modèle suivant
+                if getattr(err, "code", None) == 503 or "503" in str(err):
+                    continue
+                raise err
+
+        if not response:
+            raise HTTPException(
+                status_code=503,
+                detail=f"Tous les modèles sont actuellement surchargés : {str(last_error)}",
+            )
 
         return {
             "filename": file.filename,
