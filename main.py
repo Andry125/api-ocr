@@ -61,7 +61,7 @@ async def extract_text_from_image(file: UploadFile = File(...)):
         # Modèles valides (gemini-3.6-flash en principal)
         candidate_models = [
             "gemini-3.6-flash",
-            "gemini-2.5-flash-lite",
+            "gemini-3.5-flash",
         ]
 
         response = None
