@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(title="API OCR Gemini avec Auto-Retry")
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL")
 client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
 # Configuration du CORS
