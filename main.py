@@ -64,7 +64,7 @@ async def extract_text_from_image(file: UploadFile = File(...)):
         prompt = "Extrais tout le texte visible dans cette image. Restitue uniquement le texte extrait sans aucun commentaire ni explication."
 
         # Modèle actif (ex: gemini-3.5-flash)
-        model_name = "GEMINI_MODEL"
+        model_name = "gemini-3.5-flash-lite"
 
         # L'appel à la fonction décorée gère automatiquement les retries
         response = call_gemini_with_retry(
