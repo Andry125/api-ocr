@@ -61,7 +61,8 @@ async def extract_text_from_image(file: UploadFile = File(...)):
 
     try:
         image = Image.open(file.file)
-        prompt = "Extrais tout le texte visible dans cette image. Restitue uniquement le texte extrait sans aucun commentaire ni explication."
+        #prompt = "Extrais tout le texte visible dans cette image. Restitue uniquement le texte extrait sans aucun commentaire ni explication."
+        prompt = "Extrais tout le texte visible dans cette image. Restitue uniquement le texte extrait, sans aucun commentaire ni explication. Conserve et reproduis les structures de tableaux : en-têtes, lignes, colonnes, cellules vides et organisation des données. Représente les tableaux au format Markdown ; si un tableau ne peut pas être représenté correctement en Markdown, utilise HTML. Préserve l’ordre de lecture et les sauts de ligne utiles."
 
         # Modèle actif (ex: gemini-3.5-flash)
         model_name = GEMINI_MODEL
